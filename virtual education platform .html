@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="Virtual Green Education Platform - Learn about climate change, renewable energy, and waste management through interactive games and quizzes." />
+  <title>Virtual Green Education Platform — Modern App</title>
+  <!-- 
+    Cross-Browser & Cross-Domain Compatible
+    - Works in all modern browsers (Chrome, Firefox, Safari, Edge, Opera)
+    - Compatible with older browsers (IE11+ with polyfills)
+    - localStorage fallback for private/incognito modes
+    - Audio API fallbacks for different browser implementations
+    - Speech Synthesis with error handling
+    - No external dependencies - fully self-contained
+  -->
+  <style>
+    /* ===== CSS Variables with Fallbacks ===== */
+    :root {
+      --bg: #f0fdf4;
+      --card: #ffffff;
+      --accent: #10b981;
+      --accent-2: #059669;
+      --accent-light: #34d399;
+      --muted: #64748b;
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --glass: rgba(255, 255, 255, 0.7);
+      --shadow-sm: 0 8px 24px rgba(16, 185, 129, 0.1);
+      --shadow-md: 0 10px 20px rgba(16, 185, 129, 0.15);
+      --shadow-lg: 0 20px 40px rgba(16, 185, 129, 0.1);
+      --transition: all 0.3s ease;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+    }
+
+    /* Fallback for browsers that don't support CSS variables */
+    @supports not (--css: variables) {
+      body {
+        background: #f0fdf4;
+        color: #0f172a;
+      }
+    }
+
+    /* ===== Reset & Base Styles ===== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      /* Fallback for browsers that don't support gradients */
+      background: #f0fdf4;
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+      margin: 0;
+      color: #0f172a;
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ===== Header ===== */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 24px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+
+    /* ===== Layout ===== */
+    .container {
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      border: 1px solid rgba(16, 185, 129, 0.1);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .card + .card {
+      margin-top: 16px;
+    }
+
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid rgba(6, 182, 212, 0.1);
+      margin: 16px 0;
+    }
+
+    /* ===== Topics ===== */
+    .topics {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .topic-btn {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      border: 2px solid rgba(16, 185, 129, 0.2);
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+      font-size: 14px;
+      color: #047857;
+    }
+
+    .topic-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+      border-color: var(--accent);
+    }
+
+    .topic-btn:active {
+      transform: translateY(-2px);
+    }
+
+    .topic-detail {
+      margin-top: 12px;
+    }
+
+    .topic-detail p {
+      color: var(--muted);
+      margin: 8px 0;
+    }
+
+    /* ===== Mascot ===== */
+    .mascot {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mascot-figure {
+      width: 84px;
+      height: 84px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+      flex-shrink: 0;
+      border: 2px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .mascot-figure svg {
+      width: 64px;
+      height: 64px;
+    }
+
+    .mascot-bubble {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(209, 250, 229, 0.5) 100%);
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: #065f46;
+      flex: 1;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .mascot-title {
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .mascot-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .wave {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    /* ===== Story Mode ===== */
+    .story {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mission {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      transition: var(--transition);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .mission:hover {
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      transform: translateX(4px);
+    }
+
+    .mission.done {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+
+    .mission-title {
+      font-weight: 700;
+    }
+
+    .btn-group {
+      margin-top: 10px;
+    }
+
+    /* ===== Mini-games ===== */
+    .games {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .game-section {
+      margin-top: 10px;
+    }
+
+    .game-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .game-row > div:first-child {
+      flex: 1;
+    }
+
+    .game-row > div:last-child {
+      width: 260px;
+    }
+
+    .dropzone {
+      min-height: 60px;
+      padding: 10px;
+      border: 2px dashed rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      transition: var(--transition);
+      background: rgba(240, 253, 244, 0.5);
+    }
+
+    .dropzone.drag-over {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.1);
+      border-style: solid;
+      transform: scale(1.02);
+    }
+
+    .dropzone.vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .draggable {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: white;
+      margin: 6px;
+      cursor: grab;
+      transition: var(--transition);
+      user-select: none;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2);
+    }
+
+    .draggable:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .draggable:active {
+      cursor: grabbing;
+    }
+
+    .draggable.dragging {
+      opacity: 0.5;
+      cursor: grabbing !important;
+    }
+
+    .draggable.matched {
+      opacity: 0.7;
+      cursor: default;
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+
+    /* ===== Memory Cards ===== */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .card-tile {
+      height: 80px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid rgba(16, 185, 129, 0.2);
+      color: #047857;
+    }
+
+    .card-tile:hover:not(.matched) {
+      border-color: var(--accent);
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .card-tile.matched {
+      background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+      cursor: default;
+      border-color: var(--accent);
+      color: #065f46;
+    }
+
+    /* ===== Puzzle ===== */
+    .puzzle-area {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .puzzle-piece.selected {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* ===== Progress & Badges ===== */
+    .progress-container {
+      margin-top: 8px;
+    }
+
+    .progress {
+      height: 16px;
+      background: #d1fae5;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .progress-fill {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 50%, var(--accent-light) 100%);
+      width: 0%;
+      transition: width 0.5s ease;
+      border-radius: 999px;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .progress-text {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .badges-container {
+      margin-top: 12px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(245, 158, 11, 0.3);
+      font-weight: 700;
+      font-size: 12px;
+      color: #92400e;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+    }
+
+    .controls-group {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    /* ===== Buttons ===== */
+    .btn {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 14px;
+      box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+      background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn.secondary {
+      background: #ffffff;
+      color: var(--accent);
+      border: 2px solid rgba(16, 185, 129, 0.3);
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+    }
+
+    .btn.secondary:hover {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2);
+    }
+
+    /* ===== Toast Notification ===== */
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 12px;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      font-size: 14px;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: 600;
+    }
+
+    .toast.fade-out {
+      opacity: 0;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mascot {
+        justify-content: center;
+      }
+
+      .game-row {
+        flex-direction: column;
+      }
+
+      .game-row > div:last-child {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 12px;
+      }
+
+      header {
+        padding: 12px 16px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="header-icon" aria-hidden="true">🌍</div>
+      <h1>Virtual Green Education — Modern App</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <div>
+        <!-- Top Row: Mascot + Topics -->
+        <section class="card" id="welcomeCard">
+          <div class="mascot">
+            <div class="mascot-figure wave" id="mascotFigure" role="img" aria-label="Gizmo the Guide mascot">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <g>
+                  <rect x="8" y="10" width="48" height="36" rx="8" fill="#10b981" />
+                  <circle cx="22" cy="28" r="4" fill="#fff" />
+                  <circle cx="42" cy="28" r="4" fill="#fff" />
+                  <rect x="24" y="38" width="16" height="6" rx="3" fill="#fff" />
+                </g>
+              </svg>
+            </div>
+            <div class="mascot-bubble">
+              <div class="mascot-title">Hi! I'm Gizmo the Guide 🤖</div>
+              <div class="mascot-subtitle">Let's learn, play and earn badges for saving the planet.</div>
+            </div>
+          </div>
+
+          <div class="topics" id="topicButtonsArea" role="group" aria-label="Learning topics">
+            <!-- Topics injected by JS -->
+          </div>
+        </section>
+
+        <!-- Story Mode -->
+        <section class="card">
+          <h2>Story Mode — Journey to Save Planet Earth</h2>
+          <div class="story" id="storyMissions" role="list">
+            <!-- Missions injected here -->
+          </div>
+          <div class="btn-group">
+            <button class="btn" id="startStoryBtn" aria-label="Start story mission">Start Mission</button>
+          </div>
+        </section>
+
+        <!-- Mini-games Row -->
+        <section class="card">
+          <h2>Mini-games</h2>
+          <div class="games">
+            <div class="game-section">
+              <h3>1) Drag & Drop — Match item to bin</h3>
+              <div class="game-row">
+                <div>
+                  <div id="draggables" class="dropzone" aria-label="Draggable items"></div>
+                </div>
+                <div>
+                  <div id="bins" class="dropzone vertical" aria-label="Recycling bins"></div>
+                </div>
+              </div>
+              <div class="btn-group">
+                <button class="btn secondary" id="resetDragBtn" aria-label="Reset drag and drop game">Reset</button>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="game-section">
+              <h3>2) Matching Pairs (memory)</h3>
+              <div id="memoryBoard" class="cards" role="grid" aria-label="Memory matching game"></div>
+              <div class="btn-group">
+                <button class="btn secondary" id="resetMemoryBtn" aria-label="Reset memory game">Reset</button>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="game-section">
+              <h3>3) Puzzle: Arrange sentence</h3>
+              <div id="puzzleArea" class="puzzle-area" role="group" aria-label="Sentence puzzle"></div>
+              <div class="btn-group">
+                <button class="btn secondary" id="resetPuzzleBtn" aria-label="Shuffle puzzle">Shuffle</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Progress, Badges, Controls -->
+      <aside>
+        <div class="card">
+          <h2>Progress</h2>
+          <div class="progress-container">
+            <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <span class="progress-fill" id="progressFill"></span>
+            </div>
+          </div>
+          <div class="progress-text" id="progressText" aria-live="polite">0 points • 0%</div>
+          <div class="badges-container">
+            <h3>Badges</h3>
+            <div class="badges" id="badgesArea" role="list" aria-label="Earned badges">
+              <!-- Badges here -->
+            </div>
+          </div>
+          <div class="controls-group">
+            <button class="btn" id="narrateBtn" aria-label="Narrate welcome message">🔊 Narrate</button>
+            <button class="btn secondary" id="soundToggleBtn" aria-label="Toggle sound effects">🔈 Sound: On</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Quick Quiz</h2>
+          <div id="quickQuizArea" role="region" aria-label="Quiz area"></div>
+          <div class="btn-group">
+            <button class="btn secondary" id="startQuickQuiz" aria-label="Start quick quiz">Start Quiz</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    /********************
+     * Polyfills for older browsers
+     ********************/
+    if (!Array.prototype.includes) {
+      Array.prototype.includes = function(item) {
+        return this.indexOf(item) !== -1;
+      };
+    }
+
+    /********************
+     * Storage with fallback
+     ********************/
+    const fallbackStorage = {};
+    const StorageManager = {
+      getItem: function(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch (e) {
+          return fallbackStorage[key] || null;
+        }
+      },
+      setItem: function(key, value) {
+        try {
+          localStorage.setItem(key, value);
+        } catch (e) {
+          fallbackStorage[key] = value;
+        }
+      }
+    };
+
+    /********************
+     * App State & Constants
+     ********************/
+    const STORAGE_KEYS = {
+      SOUND_ENABLED: 'vg_sound_on',
+      BADGES: 'vg_badges',
+      SCORE: 'vg_score'
+    };
+
+    const MAX_SCORE_FOR_PROGRESS = 50;
+    const TOAST_DURATION = 2500;
+    const FADE_DURATION = 300;
+
+    // Initialize state from storage
+    function getJSON(key, defaultValue) {
+      try {
+        const val = StorageManager.getItem(key);
+        return val ? JSON.parse(val) : defaultValue;
+      } catch (e) {
+        return defaultValue;
+      }
+    }
+
+    let soundOn = getJSON(STORAGE_KEYS.SOUND_ENABLED, true);
+    let score = Number(StorageManager.getItem(STORAGE_KEYS.SCORE)) || 0;
+    let badges = getJSON(STORAGE_KEYS.BADGES, []);
+
+    /********************
+     * Audio Utilities
+     ********************/
+    let audioContext = null;
+
+    function getAudioContext() {
+      if (!audioContext) {
+        try {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+          return null;
+        }
+      }
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().catch(() => {});
+      }
+      return audioContext;
+    }
+
+    function playBeep(type = 'ok') {
+      if (!soundOn) return;
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      try {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type === 'ok' ? 'sine' : 'square';
+        osc.frequency.value = type === 'ok' ? 880 : 220;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        const now = ctx.currentTime;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.2, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.26);
+      } catch (e) {}
+    }
+
+    /********************
+     * State Management
+     ********************/
+    function saveState() {
+      StorageManager.setItem(STORAGE_KEYS.SCORE, String(score));
+      StorageManager.setItem(STORAGE_KEYS.BADGES, JSON.stringify(badges));
+      StorageManager.setItem(STORAGE_KEYS.SOUND_ENABLED, JSON.stringify(soundOn));
+      renderProgress();
+    }
+
+    function addScore(points) {
+      score += points;
+      playBeep('ok');
+      saveState();
+    }
+
+    function awardBadge(name) {
+      if (!badges.includes(name)) {
+        badges.push(name);
+        playBeep('ok');
+        saveState();
+        renderBadges();
+        showToast(`Badge earned: ${name}`);
+      }
+    }
+
+    /********************
+     * UI Utilities
+     ********************/
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      toast.setAttribute('role', 'alert');
+      document.body.appendChild(toast);
+
+      // Trigger fade out
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+      }, TOAST_DURATION - FADE_DURATION);
+
+      // Remove from DOM
+      setTimeout(() => {
+        toast.remove();
+      }, TOAST_DURATION);
+    }
+
+    /********************
+     * Topics & Quick Quiz
+     ********************/
+    const TOPICS = [
+      {
+        id: 'climate',
+        title: 'Climate Change',
+        summary: 'Causes, effects and mitigation.',
+        question: 'Which gas mainly causes global warming?',
+        options: ['Carbon Dioxide', 'Oxygen', 'Nitrogen'],
+        answer: 'Carbon Dioxide'
+      },
+      {
+        id: 'energy',
+        title: 'Renewable Energy',
+        summary: 'Solar, wind and sustainable power.',
+        question: 'Which is a renewable energy?',
+        options: ['Solar', 'Coal', 'Oil'],
+        answer: 'Solar'
+      },
+      {
+        id: 'waste',
+        title: 'Waste Management',
+        summary: 'Reduce, reuse, recycle.',
+        question: 'Which bin for plastic bottles?',
+        options: ['Recyclable', 'Organic', 'Hazardous'],
+        answer: 'Recyclable'
+      }
+    ];
+
+    const topicButtonsArea = document.getElementById('topicButtonsArea');
+
+    function initializeTopics() {
+      TOPICS.forEach(topic => {
+        const btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.textContent = topic.title;
+        btn.setAttribute('aria-label', `Learn about ${topic.title}`);
+        btn.addEventListener('click', () => openTopic(topic));
+        topicButtonsArea.appendChild(btn);
+      });
+    }
+
+    function openTopic(topic) {
+      document.getElementById('mascotFigure').classList.add('wave');
+      speak(`${topic.title}. ${topic.summary}`);
+
+      // Remove previous topic detail if exists
+      const welcome = document.getElementById('welcomeCard');
+      const oldDetail = welcome.querySelector('.topic-detail');
+      if (oldDetail) {
+        oldDetail.remove();
+      }
+
+      // Create new topic detail card
+      const card = document.createElement('div');
+      card.className = 'card topic-detail';
+      card.innerHTML = `
+        <h3>${topic.title}</h3>
+        <p>${topic.summary}</p>
+      `;
+
+      const quizBtn = document.createElement('button');
+      quizBtn.className = 'btn';
+      quizBtn.textContent = 'Take Quiz';
+      quizBtn.setAttribute('aria-label', `Take quiz on ${topic.title}`);
+      quizBtn.addEventListener('click', () => startQuickQuiz(topic));
+      card.appendChild(quizBtn);
+
+      welcome.appendChild(card);
+    }
+
+    /********************
+     * Quick Quiz
+     ********************/
+    const quickQuizArea = document.getElementById('quickQuizArea');
+
+    function startQuickQuiz(topic = null) {
+      quickQuizArea.innerHTML = '';
+
+      const items = topic ? [topic] : TOPICS;
+      const selectedTopic = items[Math.floor(Math.random() * items.length)];
+
+      const questionDiv = document.createElement('div');
+      questionDiv.innerHTML = `<strong>${selectedTopic.question}</strong>`;
+      questionDiv.style.marginBottom = '12px';
+
+      const optionsDiv = document.createElement('div');
+      optionsDiv.style.display = 'flex';
+      optionsDiv.style.gap = '8px';
+      optionsDiv.style.flexWrap = 'wrap';
+
+      selectedTopic.options.forEach(option => {
+        const optionBtn = document.createElement('button');
+        optionBtn.className = 'btn secondary';
+        optionBtn.textContent = option;
+        optionBtn.setAttribute('aria-label', `Select ${option}`);
+        optionBtn.addEventListener('click', () => {
+          if (option === selectedTopic.answer) {
+            addScore(10);
+            awardBadge(`${selectedTopic.title} Quizzer`);
+            showToast('Correct! +10 points');
+            // Mark mission 2 as done if it's the energy quiz
+            if (selectedTopic.id === 'energy' && missions[1] && !missions[1].done) {
+              missions[1].done = true;
+              addScore(missions[1].reward);
+              awardBadge('Mission: Quiz Master');
+              saveState();
+              renderMissions();
+              showToast('Mission complete!');
+            }
+          } else {
+            playBeep('bad');
+            showToast('Try again!');
+          }
+        });
+        optionsDiv.appendChild(optionBtn);
+      });
+
+      quickQuizArea.appendChild(questionDiv);
+      quickQuizArea.appendChild(optionsDiv);
+    }
+
+    const startQuizBtn = document.getElementById('startQuickQuiz');
+    if (startQuizBtn) startQuizBtn.addEventListener('click', () => startQuickQuiz());
+
+    /********************
+     * Story Mode
+     ********************/
+    const missions = [
+      { id: 'm1', title: 'Learn what climate change is', done: false, reward: 5 },
+      { id: 'm2', title: 'Complete a quiz on energy', done: false, reward: 10 },
+      { id: 'm3', title: 'Finish a mini-game (match)', done: false, reward: 15 }
+    ];
+
+    const storyMissionsEl = document.getElementById('storyMissions');
+
+    function renderMissions() {
+      storyMissionsEl.innerHTML = '';
+      missions.forEach(mission => {
+        const missionEl = document.createElement('div');
+        missionEl.className = `mission${mission.done ? ' done' : ''}`;
+        missionEl.setAttribute('role', 'listitem');
+        missionEl.innerHTML = `
+          <div class="mission-title">${mission.title}</div>
+          <div>
+            <button class="btn secondary" data-id="${mission.id}" aria-label="Start ${mission.title}">
+              ${mission.done ? 'Completed' : 'Start'}
+            </button>
+          </div>
+        `;
+
+        const startBtn = missionEl.querySelector('button');
+        if (!mission.done) {
+          startBtn.addEventListener('click', () => startMission(mission));
+        } else {
+          startBtn.disabled = true;
+        }
+
+        storyMissionsEl.appendChild(missionEl);
+      });
+    }
+
+    function startMission(mission) {
+      speak(`Starting mission: ${mission.title}`);
+
+      if (mission.id === 'm1') {
+        openTopic(TOPICS[0]);
+        missions[0].done = true;
+        addScore(mission.reward);
+        awardBadge('Mission: Learner');
+        saveState();
+        renderMissions();
+        showToast('Mission complete!');
+      } else if (mission.id === 'm2') {
+        startQuickQuiz(TOPICS[1]);
+        // Reward is handled in quiz answer handler
+      } else if (mission.id === 'm3') {
+        initDragMatch();
+        // Reward is handled when all items are matched
+      }
+    }
+
+    const startStoryBtn = document.getElementById('startStoryBtn');
+    if (startStoryBtn) {
+      startStoryBtn.addEventListener('click', () => {
+        speak('Welcome to Journey to Save Planet Earth');
+        renderMissions();
+      });
+    }
+
+    /********************
+     * Drag & Drop Game
+     ********************/
+    const draggablesEl = document.getElementById('draggables');
+    const binsEl = document.getElementById('bins');
+
+    const dragItems = [
+      { id: 'i1', label: 'Plastic Bottle', type: 'recyclable' },
+      { id: 'i2', label: 'Apple Core', type: 'organic' },
+      { id: 'i3', label: 'Old Phone', type: 'ewaste' },
+      { id: 'i4', label: 'Battery', type: 'hazardous' }
+    ];
+
+    const bins = [
+      { id: 'b_recyclable', label: 'Recyclable', accept: 'recyclable' },
+      { id: 'b_organic', label: 'Organic', accept: 'organic' },
+      { id: 'b_ewaste', label: 'E-waste', accept: 'ewaste' },
+      { id: 'b_hazard', label: 'Hazardous', accept: 'hazardous' }
+    ];
+
+    let matchedItems = 0;
+
+    function initDragMatch() {
+      if (!draggablesEl || !binsEl) return;
+
+      draggablesEl.innerHTML = '';
+      binsEl.innerHTML = '';
+      matchedItems = 0;
+
+      const shuffled = shuffleArray([...dragItems]);
+
+      shuffled.forEach(item => {
+        const draggable = document.createElement('div');
+        draggable.className = 'draggable';
+        draggable.draggable = true;
+        draggable.textContent = item.label;
+        draggable.dataset.type = item.type;
+        draggable.dataset.itemId = item.id;
+        draggable.id = item.id;
+        draggable.setAttribute('aria-label', `Drag ${item.label} to correct bin`);
+
+        draggable.addEventListener('dragstart', (e) => {
+          try {
+            // Set data for cross-browser compatibility
+            if (e.dataTransfer) {
+              e.dataTransfer.effectAllowed = 'move';
+              e.dataTransfer.setData('text/plain', `${item.type}|${item.id}`);
+              // Also store in dataset as fallback
+              e.dataTransfer.setData('text/html', item.id);
+            }
+            draggable.classList.add('dragging');
+            // Store reference for fallback
+            window._draggedItem = { type: item.type, id: item.id };
+          } catch (err) {
+            console.error('Drag start error:', err);
+          }
+        });
+
+        draggable.addEventListener('dragend', (e) => {
+          draggable.classList.remove('dragging');
+          // Remove all drag-over classes
+          document.querySelectorAll('.dropzone').forEach(zone => {
+            zone.classList.remove('drag-over');
+          });
+        });
+
+        draggablesEl.appendChild(draggable);
+      });
+
+      bins.forEach(bin => {
+        const binEl = document.createElement('div');
+        binEl.className = 'dropzone';
+        binEl.dataset.accept = bin.accept;
+        binEl.id = bin.id;
+        binEl.innerHTML = `<strong>${bin.label}</strong>`;
+        binEl.setAttribute('aria-label', `${bin.label} bin`);
+
+        // Prevent default to allow drop
+        binEl.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.dataTransfer) {
+            e.dataTransfer.dropEffect = 'move';
+          }
+          binEl.classList.add('drag-over');
+        });
+
+        binEl.addEventListener('dragenter', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          binEl.classList.add('drag-over');
+        });
+
+        binEl.addEventListener('dragleave', (e) => {
+          // Only remove if we're actually leaving the bin (not just moving to a child)
+          if (!binEl.contains(e.relatedTarget)) {
+            binEl.classList.remove('drag-over');
+          }
+        });
+
+        binEl.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          binEl.classList.remove('drag-over');
+
+          let type, id;
+          
+          // Try to get data from dataTransfer
+          try {
+            const data = e.dataTransfer.getData('text/plain');
+            if (data) {
+              [type, id] = data.split('|');
+            } else {
+              // Fallback to stored reference
+              if (window._draggedItem) {
+                type = window._draggedItem.type;
+                id = window._draggedItem.id;
+              }
+            }
+          } catch (err) {
+            // Fallback to stored reference
+            if (window._draggedItem) {
+              type = window._draggedItem.type;
+              id = window._draggedItem.id;
+            }
+          }
+
+          if (!type || !id) {
+            console.warn('Could not get drag data');
+            return;
+          }
+
+          const node = document.getElementById(id);
+          if (!node) {
+            console.warn('Dragged element not found:', id);
+            return;
+          }
+
+          // Check if item is already in a bin (not in the source draggables area)
+          const isAlreadyPlaced = node.parentElement && node.parentElement.id === 'bins';
+          const isInSourceArea = node.parentElement && node.parentElement.id === 'draggables';
+
+          if (type === binEl.dataset.accept) {
+            // Correct bin - move the item
+            if (isInSourceArea || isAlreadyPlaced) {
+              // Remove from current location
+              node.parentElement.removeChild(node);
+              
+              // Add to bin
+              node.style.opacity = '0.6';
+              node.draggable = false;
+              node.classList.add('matched');
+              binEl.appendChild(node);
+              
+              playBeep('ok');
+              addScore(5);
+              matchedItems++;
+
+              if (matchedItems === dragItems.length) {
+                awardBadge('Sorter');
+                showToast('All items sorted!');
+                // Mark mission 3 as done
+                if (missions[2] && !missions[2].done) {
+                  missions[2].done = true;
+                  addScore(missions[2].reward);
+                  awardBadge('Mission: Game Master');
+                  saveState();
+                  renderMissions();
+                  showToast('Mission complete!');
+                }
+              } else {
+                showToast('Good!');
+              }
+            }
+          } else {
+            // Wrong bin
+            playBeep('bad');
+            showToast('Try correct bin');
+          }
+
+          // Clear stored reference
+          window._draggedItem = null;
+        });
+
+        binsEl.appendChild(binEl);
+      });
+    }
+
+    const resetDragBtn = document.getElementById('resetDragBtn');
+    if (resetDragBtn) {
+      resetDragBtn.addEventListener('click', () => {
+        initDragMatch();
+        showToast('Reset drag & drop');
+      });
+    }
+
+    /********************
+     * Memory Matching Game
+     ********************/
+    const memoryBoard = document.getElementById('memoryBoard');
+    let memoryState = {
+      first: null,
+      locked: false,
+      found: 0
+    };
+
+    function initMemory() {
+      memoryBoard.innerHTML = '';
+      memoryState = { first: null, locked: false, found: 0 };
+
+      const pairs = ['Tree', 'River', 'Sun', 'Leaf'];
+      const cards = shuffleArray([...pairs, ...pairs]);
+
+      cards.forEach((card, index) => {
+        const tile = document.createElement('div');
+        tile.className = 'card-tile';
+        tile.textContent = '?';
+        tile.dataset.value = card;
+        tile.setAttribute('aria-label', `Memory card ${index + 1}, click to flip`);
+        tile.addEventListener('click', () => flipTile(tile));
+        memoryBoard.appendChild(tile);
+      });
+    }
+
+    function flipTile(tile) {
+      if (memoryState.locked || tile.classList.contains('matched')) return;
+
+      tile.textContent = tile.dataset.value;
+
+      if (!memoryState.first) {
+        memoryState.first = tile;
+        return;
+      }
+
+      memoryState.locked = true;
+
+      setTimeout(() => {
+        if (memoryState.first.dataset.value === tile.dataset.value) {
+          memoryState.first.classList.add('matched');
+          tile.classList.add('matched');
+          memoryState.found += 1;
+          addScore(5);
+
+          if (memoryState.found === 4) {
+            awardBadge('Memory Master');
+            showToast('Memory complete!');
+          } else {
+            playBeep('ok');
+          }
+        } else {
+          memoryState.first.textContent = '?';
+          tile.textContent = '?';
+          playBeep('bad');
+        }
+
+        memoryState.first = null;
+        memoryState.locked = false;
+      }, 800);
+    }
+
+    const resetMemoryBtn = document.getElementById('resetMemoryBtn');
+    if (resetMemoryBtn) {
+      resetMemoryBtn.addEventListener('click', () => {
+        initMemory();
+        showToast('Memory reset');
+      });
+    }
+
+    /********************
+     * Puzzle Game - Sentence Arrangement
+     ********************/
+    const puzzleArea = document.getElementById('puzzleArea');
+    const sentence = 'Planting trees keeps our planet cool'.split(' ');
+    let puzzleState = {
+      pieces: [],
+      selectedOrder: [],
+      isComplete: false
+    };
+
+    function initPuzzle() {
+      if (!puzzleArea) {
+        console.error('Puzzle area not found');
+        return;
+      }
+
+      puzzleArea.innerHTML = '';
+      puzzleState.selectedOrder = [];
+      puzzleState.isComplete = false;
+
+      // Create shuffled pieces
+      puzzleState.pieces = shuffleArray([...sentence]);
+
+      // Create source area for shuffled pieces
+      const sourceArea = document.createElement('div');
+      sourceArea.className = 'puzzle-source';
+      sourceArea.style.cssText = 'margin-bottom: 16px; padding: 12px; background: rgba(240, 253, 244, 0.5); border-radius: 8px;';
+      sourceArea.innerHTML = '<div style="font-weight: 600; margin-bottom: 8px; color: var(--muted);">Click words in order:</div>';
+      const sourcePieces = document.createElement('div');
+      sourcePieces.className = 'puzzle-pieces';
+      sourcePieces.style.cssText = 'display: flex; gap: 8px; flex-wrap: wrap;';
+
+      puzzleState.pieces.forEach((piece, index) => {
+        const el = document.createElement('button');
+        el.className = 'btn secondary puzzle-piece';
+        el.textContent = piece;
+        el.dataset.word = piece;
+        el.dataset.pieceIndex = index;
+        el.setAttribute('aria-label', `Puzzle piece: ${piece}`);
+        el.style.cursor = 'pointer';
+        el.style.transition = 'all 0.2s ease';
+        
+        el.addEventListener('click', () => {
+          if (puzzleState.isComplete) return;
+          
+          // Check if already selected
+          const isSelected = puzzleState.selectedOrder.includes(index);
+          
+          if (!isSelected) {
+            // Add to selected order
+            puzzleState.selectedOrder.push(index);
+            el.classList.add('selected');
+            el.style.opacity = '0.6';
+            el.style.transform = 'scale(0.95)';
+            
+            // Add to answer area
+            addPuzzlePieceToAnswer(piece, index);
+            
+            // Check if puzzle is complete
+            checkPuzzleComplete();
+          }
+        });
+        
+        sourcePieces.appendChild(el);
+      });
+
+      sourceArea.appendChild(sourcePieces);
+      puzzleArea.appendChild(sourceArea);
+
+      // Create answer area
+      const answerArea = document.createElement('div');
+      answerArea.className = 'puzzle-answer';
+      answerArea.style.cssText = 'margin-top: 16px; padding: 12px; min-height: 60px; background: rgba(255, 255, 255, 0.8); border: 2px dashed rgba(16, 185, 129, 0.3); border-radius: 8px;';
+      answerArea.innerHTML = '<div style="font-weight: 600; margin-bottom: 8px; color: var(--muted);">Your sentence:</div>';
+      const answerContainer = document.createElement('div');
+      answerContainer.id = 'puzzleAnswerContainer';
+      answerContainer.style.cssText = 'display: flex; gap: 8px; flex-wrap: wrap; align-items: center; min-height: 40px;';
+      answerArea.appendChild(answerContainer);
+      puzzleArea.appendChild(answerArea);
+    }
+
+    function addPuzzlePieceToAnswer(word, sourceIndex) {
+      const answerContainer = document.getElementById('puzzleAnswerContainer');
+      if (!answerContainer) return;
+
+      const el = document.createElement('span');
+      el.className = 'puzzle-answer-piece';
+      el.textContent = word;
+      el.dataset.sourceIndex = sourceIndex;
+      el.style.cssText = 'display: inline-block; padding: 8px 12px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%); color: white; border-radius: 8px; font-weight: 600; cursor: pointer;';
+      
+      // Allow removing from answer
+      el.addEventListener('click', () => {
+        if (puzzleState.isComplete) return;
+        
+        // Remove from selected order
+        const indexToRemove = puzzleState.selectedOrder.indexOf(parseInt(el.dataset.sourceIndex));
+        if (indexToRemove !== -1) {
+          puzzleState.selectedOrder.splice(indexToRemove, 1);
+        }
+        
+        // Reset source piece
+        const sourcePiece = puzzleArea.querySelector(`[data-piece-index="${el.dataset.sourceIndex}"]`);
+        if (sourcePiece) {
+          sourcePiece.classList.remove('selected');
+          sourcePiece.style.opacity = '1';
+          sourcePiece.style.transform = 'scale(1)';
+        }
+        
+        // Remove from answer
+        el.remove();
+      });
+      
+      answerContainer.appendChild(el);
+    }
+
+    function checkPuzzleComplete() {
+      if (puzzleState.selectedOrder.length !== sentence.length) {
+        return; // Not all pieces selected yet
+      }
+
+      // Check if order is correct
+      const answerContainer = document.getElementById('puzzleAnswerContainer');
+      if (!answerContainer) return;
+
+      const currentOrder = [];
+      puzzleState.selectedOrder.forEach(sourceIndex => {
+        currentOrder.push(puzzleState.pieces[sourceIndex]);
+      });
+
+      const isCorrect = currentOrder.join(' ') === sentence.join(' ');
+
+      if (isCorrect) {
+        puzzleState.isComplete = true;
+        answerContainer.style.border = '2px solid var(--accent)';
+        answerContainer.style.background = 'rgba(16, 185, 129, 0.1)';
+        
+        // Disable all source pieces
+        puzzleArea.querySelectorAll('.puzzle-piece').forEach(piece => {
+          piece.style.pointerEvents = 'none';
+        });
+
+        playBeep('ok');
+        addScore(10);
+        awardBadge('Puzzle Master');
+        showToast('Correct! Sentence arranged perfectly!');
+        
+        // Mark mission if applicable
+        if (missions[2] && !missions[2].done) {
+          missions[2].done = true;
+          addScore(missions[2].reward);
+          awardBadge('Mission: Game Master');
+          saveState();
+          renderMissions();
+        }
+      } else {
+        // Show hint after a delay
+        setTimeout(() => {
+          if (!puzzleState.isComplete) {
+            showToast('Not quite right. Try again!');
+            playBeep('bad');
+          }
+        }, 500);
+      }
+    }
+
+    const resetPuzzleBtn = document.getElementById('resetPuzzleBtn');
+    if (resetPuzzleBtn) {
+      resetPuzzleBtn.addEventListener('click', () => {
+        initPuzzle();
+        showToast('Puzzle shuffled');
+      });
+    }
+
+    /********************
+     * Utilities
+     ********************/
+    function shuffleArray(arr) {
+      const newArr = [...arr];
+      for (let i = newArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+      }
+      return newArr;
+    }
+
+    /********************
+     * Voice Narration
+     ********************/
+    function speak(text) {
+      if (!('speechSynthesis' in window)) return;
+      try {
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        speechSynthesis.speak(utterance);
+      } catch (e) {}
+    }
+
+    const narrateBtn = document.getElementById('narrateBtn');
+    if (narrateBtn) {
+      narrateBtn.addEventListener('click', () => {
+        speak('Welcome to the virtual green education platform. Complete missions to earn points and badges!');
+      });
+    }
+
+    /********************
+     * Sound Toggle
+     ********************/
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+
+    function renderSoundBtn() {
+      soundToggleBtn.textContent = soundOn ? '🔈 Sound: On' : '🔇 Sound: Off';
+      soundToggleBtn.setAttribute('aria-pressed', soundOn);
+    }
+
+    if (soundToggleBtn) {
+      soundToggleBtn.addEventListener('click', () => {
+        soundOn = !soundOn;
+        renderSoundBtn();
+        saveState();
+        showToast(soundOn ? 'Sound enabled' : 'Sound disabled');
+      });
+    }
+
+    /********************
+     * Badges & Progress UI
+     ********************/
+    const badgesArea = document.getElementById('badgesArea');
+
+    function renderBadges() {
+      badgesArea.innerHTML = '';
+
+      if (badges.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.textContent = 'No badges yet. Complete activities to earn badges!';
+        emptyMsg.style.color = 'var(--muted)';
+        emptyMsg.style.fontSize = '13px';
+        badgesArea.appendChild(emptyMsg);
+        return;
+      }
+
+      badges.forEach(badge => {
+        const el = document.createElement('div');
+        el.className = 'badge';
+        el.textContent = badge;
+        el.setAttribute('role', 'listitem');
+        badgesArea.appendChild(el);
+      });
+    }
+
+    function renderProgress() {
+      const percent = Math.min(100, Math.round((score / MAX_SCORE_FOR_PROGRESS) * 100));
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const progressBar = progressFill.parentElement;
+
+      progressFill.style.width = `${percent}%`;
+      progressBar.setAttribute('aria-valuenow', percent);
+      progressText.textContent = `${score} points • ${percent}%`;
+    }
+
+    /********************
+     * Initialization
+     ********************/
+
+    function init() {
+      initializeTopics();
+      renderBadges();
+      renderProgress();
+      renderMissions();
+      initMemory();
+      initPuzzle();
+      initDragMatch();
+      renderSoundBtn();
+      setTimeout(() => speak('Welcome young eco learner!'), 800);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
+</body>
+</html>
